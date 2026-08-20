@@ -1,0 +1,43 @@
+{
+  "$schema": "https://design-tokens.org/schema.json",
+  "name": "ROSHN REIT",
+  "colors": {
+    "brand": {
+      "orange-50":  "#FFF6EB",
+      "orange-100": "#FFEED9",
+      "orange-200": "#FFDDB3",
+      "orange-300": "#FFC385",
+      "orange-400": "#FFAD5C",
+      "orange-500": "#FF9933",
+      "orange-600": "#E5822A",
+      "orange-700": "#C46A1F"
+    },
+    "ink": {
+      "ink-100": "#F4F0EA",
+      "ink-200": "#E8E2D9",
+      "ink-300": "#D2CAC0",
+      "ink-400": "#ABA096",
+      "ink-500": "#847A6E",
+      "ink-600": "#5E564D",
+      "ink-700": "#433C36",
+      "ink-800": "#2B2622",
+      "ink-900": "#1B1815"
+    },
+    "surface": {
+      "cool":    "#F9FDFE",
+      "cool-2":  "#F1F7F8",
+      "warm":    "#FFF8F1",
+      "card":    "#FFFFFF"
+    },
+    "semantic": {
+      "success":     "#3F8F5F",
+      "success-bg":  "#E9F5EE",
+      "warning":     "#C4841F",
+      "warning-bg":  "#FBF0DD",
+      "error":       "#C0503F",
+      "error-bg":    "#FBEBE8",
+      "info":        "#3B7FA6",
+      "info-bg":     "#E9F3F8"
+    }
+  }
+}

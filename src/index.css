@@ -174,4 +174,10 @@
   html {
     @apply font-sans;
     }
+  html[dir='rtl'] body {
+    direction: rtl;
+  }
+  html[dir='ltr'] body {
+    direction: ltr;
+  }
 }

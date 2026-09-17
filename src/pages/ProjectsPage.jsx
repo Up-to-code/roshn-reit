@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
+import { useLanguage } from '../i18n/LanguageContext.jsx'
 
 gsap.registerPlugin(ScrollTrigger)
 
@@ -10,17 +11,17 @@ const allProjects = [
   { id: 2, name: 'بنتهاوس الواحة', location: 'جدة', price: '3,500,000', area: '320 م²', desc: 'بنتهاوس فاخر مع إطلالة بحرية 360° وتشطيبات من أرقى الماركات العالمية', tag: 'حصري', features: ['5 غرف', 'مسبح', 'حديقة'], img: '/assts/Project2.png', type: 'penthouse' },
   { id: 3, name: 'دوبلكس النخبة', location: 'جدة', price: '2,100,000', area: '240 م²', desc: 'دوبلكس بتصميم معماري استثنائي يقع في حي النخبة بمدينة جدة', tag: 'مميز', features: ['4 غرف', 'جاكوزي', 'صالة'], img: '/assts/Project3.png', type: 'duplex' },
   { id: 4, name: 'شقة الميناء', location: 'جدة', price: '1,800,000', area: '160 م²', desc: 'شقة ساحرة مطلة على الشاطئ مباشرة مع إطلالة بحرية خلابة', tag: null, features: ['3 غرف', '2 حمامات', 'شرفة بحرية', 'موقف'], img: '/assts/Projects.png', type: 'apartment' },
-  { id: 5, name: 'استوديو النخبة', location: 'جدة', price: '850,000', area: '95 م²', desc: 'استوديو عصري مع تشطيبات عالية الجودة في vịمة مميزة', tag: null, features: ['استوديو', '1 حمام', 'صالة رياضية'], img: '/assts/Project2.png', type: 'studio' },
+  { id: 5, name: 'استوديو النخبة', location: 'جدة', price: '850,000', area: '95 م²', desc: 'استوديو عصري مع تشطيبات عالية الجودة في موقع مميز', tag: null, features: ['استوديو', '1 حمام', 'صالة رياضية'], img: '/assts/Project2.png', type: 'studio' },
   { id: 6, name: 'فيلا المحيط', location: 'جدة', price: '4,200,000', area: '450 م²', desc: 'فيلا فاخرة مع حديقة خاصة ومسبح و إطلالة بحرية ساحرة', tag: 'جديد', features: ['6 غرف', 'مسبح', 'حديقة', 'موقف'], img: '/assts/Project3.png', type: 'villa' },
 ]
 
 const filters = [
-  { label: 'الكل', value: 'all' },
-  { label: 'شقة', value: 'apartment' },
-  { label: 'بنتهاوس', value: 'penthouse' },
-  { label: 'دوبلكس', value: 'duplex' },
-  { label: 'استوديو', value: 'studio' },
-  { label: 'فيلا', value: 'villa' },
+  { key: 'all', value: 'all' },
+  { key: 'apartment', value: 'apartment' },
+  { key: 'penthouse', value: 'penthouse' },
+  { key: 'duplex', value: 'duplex' },
+  { key: 'studio', value: 'studio' },
+  { key: 'villa', value: 'villa' },
 ]
 
 export default function ProjectsPage() {
@@ -28,6 +29,7 @@ export default function ProjectsPage() {
   const headerRef = useRef(null)
   const gridRef = useRef(null)
   const [activeFilter, setActiveFilter] = useState('all')
+  const { t, isArabic } = useLanguage()
 
   const filtered = activeFilter === 'all' ? allProjects : allProjects.filter((p) => p.type === activeFilter)
 
@@ -50,20 +52,29 @@ export default function ProjectsPage() {
     return () => ctx.revert()
   }, [activeFilter])
 
+  const projectNames = {
+    1: 'ROSHN Residential Towers', 2: 'Oasis Penthouse', 3: 'Elite Duplex',
+    4: 'Harbor Apartment', 5: 'Elite Studio', 6: 'Ocean Villa',
+  }
+  const projectDescriptions = {
+    1: 'A premium residential community overlooking the Jeddah Corniche.', 2: 'A luxury penthouse with a 360° sea view and world-class finishes.', 3: 'An exceptional duplex in Jeddah’s elite district.',
+    4: 'A charming beachfront apartment with a breathtaking sea view.', 5: 'A modern studio with high-quality finishes in a prime location.', 6: 'A luxury villa with a private garden, pool, and sea view.',
+  }
+
   return (
-    <section ref={sectionRef} dir="rtl" style={{ padding: '120px 8vw 80px', minHeight: '100vh' }}>
+    <section ref={sectionRef} dir={isArabic ? 'rtl' : 'ltr'} style={{ padding: '120px 8vw 80px', minHeight: '100vh' }}>
       <div style={{ maxWidth: 1200, margin: '0 auto' }}>
         {/* Header */}
         <div ref={headerRef} style={{ marginBottom: 48 }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 12 }}>
             <div style={{ width: 32, height: 2, background: '#C8956C', borderRadius: 1 }} />
-            <span style={{ fontFamily: "'Saudi', sans-serif", fontSize: '0.75rem', color: '#C8956C', fontWeight: 700, letterSpacing: 1 }}>العقارات</span>
+            <span style={{ fontFamily: "'Saudi', sans-serif", fontSize: '0.75rem', color: '#C8956C', fontWeight: 700, letterSpacing: 1 }}>{t('projects', 'eyebrow')}</span>
           </div>
           <h1 style={{ fontFamily: "'Saudi', sans-serif", fontSize: 'clamp(2rem, 5vw, 3rem)', fontWeight: 700, color: '#1B1815', marginBottom: 8 }}>
-            جميع مشاريعنا
+            {t('projects', 'title')}
           </h1>
           <p style={{ fontFamily: "'Saudi', sans-serif", fontSize: 'clamp(0.85rem, 1.8vw, 1rem)', color: '#1B1815', opacity: 0.5, maxWidth: 520, lineHeight: 1.7 }}>
-            تصفح مجموعتنا الكاملة من المشاريع السكنية الفاخرة في جدة
+            {t('projects', 'subtitle')}
           </p>
         </div>
 
@@ -82,7 +93,7 @@ export default function ProjectsPage() {
                 transition: 'all 0.3s cubic-bezier(0.4,0,0.2,1)',
               }}
             >
-              {f.label}
+              {t('projects', f.key)}
             </button>
           ))}
         </div>
@@ -90,6 +101,10 @@ export default function ProjectsPage() {
         {/* Grid */}
         <div ref={gridRef} style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 20 }}>
           {filtered.map((p) => (
+            (() => {
+              const name = isArabic ? p.name : projectNames[p.id]
+              const description = isArabic ? p.desc : projectDescriptions[p.id]
+              return (
             <Link
               key={p.id}
               to={`/projects/${p.id}`}
@@ -116,8 +131,8 @@ export default function ProjectsPage() {
                 {/* Content */}
                 <div style={{ padding: '20px 18px' }}>
                   <p style={{ fontFamily: "'Saudi', sans-serif", fontSize: '0.65rem', color: '#C8956C', fontWeight: 700, marginBottom: 4 }}>{p.location}</p>
-                  <h3 style={{ fontFamily: "'Saudi', sans-serif", fontSize: '1rem', fontWeight: 700, color: '#1B1815', marginBottom: 6 }}>{p.name}</h3>
-                  <p style={{ fontFamily: "'Saudi', sans-serif", fontSize: '0.75rem', color: '#1B1815', opacity: 0.45, lineHeight: 1.6, marginBottom: 14 }}>{p.desc}</p>
+                  <h3 style={{ fontFamily: "'Saudi', sans-serif", fontSize: '1rem', fontWeight: 700, color: '#1B1815', marginBottom: 6 }}>{name}</h3>
+                  <p style={{ fontFamily: "'Saudi', sans-serif", fontSize: '0.75rem', color: '#1B1815', opacity: 0.45, lineHeight: 1.6, marginBottom: 14 }}>{description}</p>
 
                   {/* Features */}
                   <div style={{ display: 'flex', flexWrap: 'wrap', gap: 5, marginBottom: 14 }}>
@@ -132,12 +147,14 @@ export default function ProjectsPage() {
                   {/* Price */}
                   <div style={{ display: 'flex', alignItems: 'baseline', gap: 6, borderTop: '1px solid rgba(27,24,21,0.06)', paddingTop: 12 }}>
                     <span style={{ fontFamily: "'Saudi', sans-serif", fontSize: '1.1rem', fontWeight: 700, color: '#C8956C' }}>{p.price}</span>
-                    <span style={{ fontFamily: "'Saudi', sans-serif", fontSize: '0.58rem', color: '#1B1815', opacity: 0.3 }}>ريال</span>
+                    <span style={{ fontFamily: "'Saudi', sans-serif", fontSize: '0.58rem', color: '#1B1815', opacity: 0.3 }}>{t('common', 'sar')}</span>
                     <span style={{ fontFamily: "'Saudi', sans-serif", fontSize: '0.62rem', color: '#1B1815', opacity: 0.25, marginRight: 'auto' }}>{p.area}</span>
                   </div>
                 </div>
               </div>
             </Link>
+              )
+            })()
           ))}
         </div>
       </div>

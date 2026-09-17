@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState, useCallback } from 'react'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
+import { useLanguage } from '../i18n/LanguageContext.jsx'
 
 gsap.registerPlugin(ScrollTrigger)
 
@@ -100,6 +101,7 @@ export default function CTASection() {
   const [errors, setErrors] = useState({})
   const [form, setForm] = useState({ name: '', phone: '', email: '', propertyType: '', budget: '', message: '' })
   const mobile = useIsMobile()
+  const { t, isArabic } = useLanguage()
 
   useEffect(() => {
     const ctx = gsap.context(() => {
@@ -187,7 +189,7 @@ export default function CTASection() {
   }
 
   return (
-    <section ref={sectionRef} dir="rtl">
+    <section ref={sectionRef} dir={isArabic ? 'rtl' : 'ltr'}>
       <Confetti active={submitted} />
 
       <div style={{ background: '#3A3530', padding: mobile ? '40px 5vw' : '56px 8vw' }}>
@@ -205,22 +207,22 @@ export default function CTASection() {
               <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 18 }}>
                 <div style={{ marginBottom: 12 }}>
                   <h2 style={{ fontFamily: "'Saudi', sans-serif", fontSize: 'clamp(1.4rem, 3vw, 1.8rem)', fontWeight: 700, color: '#fff', marginBottom: 6 }}>
-                    أرسل لنا رسالة
+                    {t('contact', 'title')}
                   </h2>
                   <p style={{ fontFamily: "'Saudi', sans-serif", fontSize: '0.82rem', color: '#fff', opacity: 0.35 }}>
-                    أكمل النموذج أدناه وسنرد عليك في أقرب وقت
+                    {t('contact', 'subtitle')}
                   </p>
                 </div>
 
                 {/* Name + Email row */}
                 <div style={{ display: 'grid', gridTemplateColumns: mobile ? '1fr' : '1fr 1fr', gap: 14 }}>
                   <div style={fieldWrap}>
-                    <label style={labelStyle(!!errors.name)}>الاسم الكامل *</label>
+                    <label style={labelStyle(!!errors.name)}>{t('contact', 'name')}</label>
                     <input
                       type="text"
                       value={form.name}
                       onChange={(e) => onChange('name', e.target.value)}
-                      placeholder="أدخل اسمك"
+                      placeholder={t('contact', 'namePlaceholder')}
                       required
                       style={errors.name ? { ...inputBase, borderColor: 'rgba(231,76,60,0.5)' } : inputBase}
                       onFocus={(e) => { if (!errors.name) { e.target.style.background = 'rgba(255,255,255,0.07)'; e.target.style.borderColor = 'rgba(200,149,108,0.5)' } }}
@@ -229,7 +231,7 @@ export default function CTASection() {
                     {errors.name && <p style={errorStyle}>{errors.name}</p>}
                   </div>
                   <div style={fieldWrap}>
-                    <label style={labelStyle(!!errors.email)}>البريد الإلكتروني</label>
+                    <label style={labelStyle(!!errors.email)}>{t('contact', 'email')}</label>
                     <input
                       type="email"
                       value={form.email}
@@ -245,7 +247,7 @@ export default function CTASection() {
 
                 {/* Phone */}
                 <div style={fieldWrap}>
-                  <label style={labelStyle(!!errors.phone)}>رقم الجوال *</label>
+                  <label style={labelStyle(!!errors.phone)}>{t('contact', 'phone')}</label>
                   <input
                     type="tel"
                     value={form.phone}
@@ -262,7 +264,7 @@ export default function CTASection() {
                 {/* Property type + Budget row */}
                 <div style={{ display: 'grid', gridTemplateColumns: mobile ? '1fr' : '1fr 1fr', gap: 14 }}>
                   <div style={fieldWrap}>
-                    <label style={labelStyle(false)}>نوع العقار</label>
+                    <label style={labelStyle(false)}>{t('contact', 'propertyType')}</label>
                     <select
                       value={form.propertyType}
                       onChange={(e) => onChange('propertyType', e.target.value)}
@@ -279,7 +281,7 @@ export default function CTASection() {
                     </select>
                   </div>
                   <div style={fieldWrap}>
-                    <label style={labelStyle(false)}>الميزانية التقريبية</label>
+                    <label style={labelStyle(false)}>{t('contact', 'budget')}</label>
                     <select
                       value={form.budget}
                       onChange={(e) => onChange('budget', e.target.value)}
@@ -299,7 +301,7 @@ export default function CTASection() {
 
                 {/* Message */}
                 <div style={fieldWrap}>
-                  <label style={labelStyle(false)}>رسالتك</label>
+                  <label style={labelStyle(false)}>{t('contact', 'message')}</label>
                   <textarea
                     value={form.message}
                     onChange={(e) => onChange('message', e.target.value)}
@@ -322,7 +324,7 @@ export default function CTASection() {
                     onMouseEnter={(e) => { e.currentTarget.style.background = '#d4a57a'; e.currentTarget.style.transform = 'translateY(-2px)'; e.currentTarget.style.boxShadow = '0 6px 20px rgba(200,149,108,0.3)' }}
                     onMouseLeave={(e) => { e.currentTarget.style.background = '#C8956C'; e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.boxShadow = 'none' }}
                   >
-                    إرسال
+                    {t('contact', 'send')}
                   </button>
                   <p style={{ fontFamily: "'Saudi', sans-serif", fontSize: '0.7rem', color: '#fff', opacity: 0.2 }}>* الحقول المطلوبة</p>
                 </div>
@@ -346,7 +348,7 @@ export default function CTASection() {
 
           {/* Contact info */}
           <div ref={contactRef} style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', position: 'relative', zIndex: 1, borderRight: '1px solid rgba(255,255,255,0.06)', paddingRight: 48 }}>
-            <h2 style={{ fontFamily: "'Saudi', sans-serif", fontSize: 'clamp(1.4rem, 3vw, 1.8rem)', fontWeight: 700, color: '#fff', marginBottom: 16 }}>تواصل معنا</h2>
+            <h2 style={{ fontFamily: "'Saudi', sans-serif", fontSize: 'clamp(1.4rem, 3vw, 1.8rem)', fontWeight: 700, color: '#fff', marginBottom: 16 }}>{t('common', 'contactUs')}</h2>
             <p style={{ fontFamily: "'Saudi', sans-serif", fontSize: '0.85rem', color: '#fff', opacity: 0.35, lineHeight: 1.8, marginBottom: 36 }}>
               نحن هنا لمساعدتك. لا تتردد في التواصل معنا في أي وقت
             </p>

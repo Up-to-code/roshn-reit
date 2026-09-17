@@ -2,6 +2,7 @@ import { useEffect, useRef } from 'react'
 import { Link } from 'react-router-dom'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
+import { useLanguage } from '../i18n/LanguageContext.jsx'
 
 gsap.registerPlugin(ScrollTrigger)
 
@@ -20,10 +21,19 @@ const testimonials = [
   { name: 'عبدالله القحطاني', text: 'استثمار ممتاز. قيمة العقار ارتفعت بشكل ملحوظ خلال سنة واحدة فقط.', rating: 5 },
 ]
 
+const advantagesEnglish = [
+  ['Unmatched quality', 'We use premium materials and the latest technology in every project.'],
+  ['Modern design', 'Distinctive architecture that balances elegance and practicality.'],
+  ['Strategic locations', 'Our projects are close to essential services and amenities in Jeddah.'],
+  ['After-sales care', 'A dedicated support team is ready to help after handover.'],
+  ['Secure investment', 'Trusted opportunities designed for lasting value and rewarding returns.'],
+  ['Full transparency', 'Clear information and transparent communication for every decision.'],
+]
+
 export default function WhyUsPage() {
-  const sectionRef = useRef(null)
   const heroRef = useRef(null)
   const contentRef = useRef(null)
+  const { t, isArabic } = useLanguage()
 
   useEffect(() => {
     window.scrollTo(0, 0)
@@ -38,19 +48,19 @@ export default function WhyUsPage() {
   }, [])
 
   return (
-    <div dir="rtl" style={{ minHeight: '100vh' }}>
+    <div dir={isArabic ? 'rtl' : 'ltr'} style={{ minHeight: '100vh' }}>
       {/* Hero */}
       <div ref={heroRef} style={{ padding: '140px 8vw 60px', textAlign: 'center' }}>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 12, marginBottom: 16 }}>
           <div style={{ width: 32, height: 2, background: '#C8956C', borderRadius: 1 }} />
-          <span style={{ fontFamily: "'Saudi', sans-serif", fontSize: '0.75rem', color: '#C8956C', fontWeight: 700, letterSpacing: 1 }}>لماذا روشن</span>
+          <span style={{ fontFamily: "'Saudi', sans-serif", fontSize: '0.75rem', color: '#C8956C', fontWeight: 700, letterSpacing: 1 }}>{t('whyUs', 'eyebrow')}</span>
           <div style={{ width: 32, height: 2, background: '#C8956C', borderRadius: 1 }} />
         </div>
         <h1 style={{ fontFamily: "'Saudi', sans-serif", fontSize: 'clamp(2rem, 5vw, 3rem)', fontWeight: 700, color: '#1B1815', marginBottom: 12 }}>
-          لماذا تختارنا؟
+          {t('whyUs', 'title')}
         </h1>
         <p style={{ fontFamily: "'Saudi', sans-serif", fontSize: 'clamp(0.85rem, 1.8vw, 1rem)', color: '#1B1815', opacity: 0.5, maxWidth: 600, margin: '0 auto', lineHeight: 1.8 }}>
-          نقدم لك مزايا فريدة تجعل تجربتك معنا استثنائية من البداية إلى النهاية
+          {t('whyUs', 'intro')}
         </p>
       </div>
 
@@ -68,16 +78,16 @@ export default function WhyUsPage() {
               <div style={{ width: 48, height: 48, borderRadius: 12, background: 'rgba(200,149,108,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 16 }}>
                 {a.icon}
               </div>
-              <h3 style={{ fontFamily: "'Saudi', sans-serif", fontSize: '1rem', fontWeight: 700, color: '#1B1815', marginBottom: 8 }}>{a.title}</h3>
-              <p style={{ fontFamily: "'Saudi', sans-serif", fontSize: '0.82rem', color: '#1B1815', opacity: 0.5, lineHeight: 1.7 }}>{a.desc}</p>
+              <h3 style={{ fontFamily: "'Saudi', sans-serif", fontSize: '1rem', fontWeight: 700, color: '#1B1815', marginBottom: 8 }}>{isArabic ? a.title : advantagesEnglish[i][0]}</h3>
+              <p style={{ fontFamily: "'Saudi', sans-serif", fontSize: '0.82rem', color: '#1B1815', opacity: 0.5, lineHeight: 1.7 }}>{isArabic ? a.desc : advantagesEnglish[i][1]}</p>
             </div>
           ))}
         </div>
 
         {/* Testimonials */}
         <div style={{ marginBottom: 64 }}>
-          <h2 style={{ fontFamily: "'Saudi', sans-serif", fontSize: '1.6rem', fontWeight: 700, color: '#1B1815', marginBottom: 8 }}>ماذا يقول عملاؤنا</h2>
-          <p style={{ fontFamily: "'Saudi', sans-serif", fontSize: '0.85rem', color: '#1B1815', opacity: 0.45, marginBottom: 32 }}>تجارب حقيقية من عملاء راضين</p>
+          <h2 style={{ fontFamily: "'Saudi', sans-serif", fontSize: '1.6rem', fontWeight: 700, color: '#1B1815', marginBottom: 8 }}>{t('whyUs', 'testimonials')}</h2>
+          <p style={{ fontFamily: "'Saudi', sans-serif", fontSize: '0.85rem', color: '#1B1815', opacity: 0.45, marginBottom: 32 }}>{t('whyUs', 'testimonialsIntro')}</p>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 20 }}>
             {testimonials.map((t, i) => (
               <div key={i} style={{ padding: '24px 20px', background: '#F3F0EB', borderRadius: 14 }}>
@@ -99,10 +109,10 @@ export default function WhyUsPage() {
             <circle cx="70" cy="70" r="60" /><circle cx="70" cy="70" r="40" /><circle cx="70" cy="70" r="20" />
           </svg>
           <div style={{ position: 'relative', zIndex: 1 }}>
-            <h2 style={{ fontFamily: "'Saudi', sans-serif", fontSize: '1.5rem', fontWeight: 700, color: '#fff', marginBottom: 12 }}>جاهز لبدء رحلتك العقارية؟</h2>
-            <p style={{ fontFamily: "'Saudi', sans-serif", fontSize: '0.88rem', color: '#fff', opacity: 0.5, marginBottom: 24 }}>تواصل معنا اليوم ودعنا نساعدك في إيجاد المنزل المثالي</p>
+            <h2 style={{ fontFamily: "'Saudi', sans-serif", fontSize: '1.5rem', fontWeight: 700, color: '#fff', marginBottom: 12 }}>{t('whyUs', 'ctaTitle')}</h2>
+            <p style={{ fontFamily: "'Saudi', sans-serif", fontSize: '0.88rem', color: '#fff', opacity: 0.5, marginBottom: 24 }}>{t('whyUs', 'ctaText')}</p>
             <Link to="/contact" style={{ fontFamily: "'Saudi', sans-serif", fontSize: '0.85rem', fontWeight: 700, color: '#1B1815', background: '#C8956C', border: 'none', borderRadius: 8, padding: '12px 32px', cursor: 'pointer', textDecoration: 'none', display: 'inline-block', transition: 'all 0.3s' }}>
-              تواصل معنا
+              {t('common', 'contactUs')}
             </Link>
           </div>
         </div>

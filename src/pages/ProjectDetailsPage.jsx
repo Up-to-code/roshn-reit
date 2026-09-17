@@ -1,13 +1,14 @@
-import { useEffect, useRef, useState, useCallback } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useParams, Link, useNavigate } from 'react-router-dom'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import ModelViewer from '../components/ModelViewer'
+import { useLanguage } from '../i18n/LanguageContext.jsx'
 
 gsap.registerPlugin(ScrollTrigger)
 
 const allProjects = [
-  { id: 1, name: 'أبراج روشن السكنية', location: 'جدة', price: '1,200,000', area: '185 م²', desc: 'مجمع سكني فاخر يطل على كورنيش جدة بتصميم عصري يجمع بين الراحة والأناقة. يتميز المجمع بموقعه المميز على شاطئ البحر مباشرة، مما يوفر إطلالة خلابة على الأفق البحري.', tag: 'جديد', features: ['3 غرف', '2 حمامات', 'مطبخ', 'شرفة', 'موقف'], imgs: ['/assts/Projects.png', '/assts/Project2.png', '/assts/Project3.png'], type: 'apartment', year: '2024', developer: 'روشن العقارية', architect: 'مكتب أحمد العتيبي للمعمارية', style: 'عصري معاصر', interior: '|minimalي|minimalي', rooms: ['غرفة معيشة رئيسية', 'غرفة نوم رئيسية', 'غرفة نوم ثانية', 'مطبخ مفتوح', 'حمام رئيسي', 'شرفة'], lat: 21.5433, lng: 39.1728, finishes: 'تشطيبات سوبر ديلوكس', floors: '20', parking: '2 مواقف' },
+  { id: 1, name: 'أبراج روشن السكنية', location: 'جدة', price: '1,200,000', area: '185 م²', desc: 'مجمع سكني فاخر يطل على كورنيش جدة بتصميم عصري يجمع بين الراحة والأناقة. يتميز المجمع بموقعه المميز على شاطئ البحر مباشرة، مما يوفر إطلالة خلابة على الأفق البحري.', tag: 'جديد', features: ['3 غرف', '2 حمامات', 'مطبخ', 'شرفة', 'موقف'], imgs: ['/assts/Projects.png', '/assts/Project2.png', '/assts/Project3.png'], type: 'apartment', year: '2024', developer: 'روشن العقارية', architect: 'مكتب أحمد العتيبي للمعمارية', style: 'عصري معاصر', interior: 'تصميم داخلي بسيط', rooms: ['غرفة معيشة رئيسية', 'غرفة نوم رئيسية', 'غرفة نوم ثانية', 'مطبخ مفتوح', 'حمام رئيسي', 'شرفة'], lat: 21.5433, lng: 39.1728, finishes: 'تشطيبات سوبر ديلوكس', floors: '20', parking: '2 مواقف' },
   { id: 2, name: 'بنتهاوس الواحة', location: 'جدة', price: '3,500,000', area: '320 م²', desc: 'بنتهاوس فاخر مع إطلالة بحرية 360° وتشطيبات من أرقى الماركات العالمية. يتميز البنتهاوس بتصميم داخلي عصري يجمع بين الفخامة والراحة.', tag: 'حصري', features: ['5 غرف', 'مسبح', 'حديقة'], imgs: ['/assts/Project2.png', '/assts/Project3.png', '/assts/Projects.png'], type: 'penthouse', year: '2024', developer: 'روشن العقارية', architect: 'استوديو المصمم خالد السبيعي', style: 'فاخر عصري', interior: 'كلاسيكي حديث', rooms: ['صالة استقبال واسعة', 'صالة معيشة عائلية', 'غرفة نوم ماستر', '3 غرف نوم إضافية', 'مطبخ شيف', 'مطبخ مساعد', '3 حمامات', 'جاكوزي', 'مسبح خاص', 'حديقة سطحية'], lat: 21.5895, lng: 39.1582, finishes: 'تشطيبات بريميوم', floors: '30', parking: '3 مواقف' },
   { id: 3, name: 'دوبلكس النخبة', location: 'جدة', price: '2,100,000', area: '240 م²', desc: 'دوبلكس بتصميم معماري استثنائي يقع في حي النخبة بمدينة جدة. يتميز الدوبلكس بمساحاته الواسعة وتصميمه الفريد.', tag: 'مميز', features: ['4 غرف', 'جاكوزي', 'صالة'], imgs: ['/assts/Project3.png', '/assts/Projects.png', '/assts/Project2.png'], type: 'duplex', year: '2023', developer: 'روشن العقارية', architect: 'جروب المعماريون', style: 'مودرن', interior: 'عصري أنيق', rooms: ['الطابق الأول: صالة معيشة + مطبخ + حمام', 'الطابق الثاني: 4 غرف نوم + جاكوزي', 'غرفة ماستر مع بلكون', 'صالة عائلية', 'مكتب منزلي'], lat: 21.5621, lng: 39.1984, finishes: 'تشطيبات ديلوكس', floors: '12', parking: '2 مواقف' },
   { id: 4, name: 'شقة الميناء', location: 'جدة', price: '1,800,000', area: '160 م²', desc: 'شقة ساحرة مطلة على الشاطئ مباشرة مع إطلالة بحرية خلابة. تتميز الشقة بتصميمها العصري وتشطيباتها عالية الجودة.', tag: null, features: ['3 غرف', '2 حمامات', 'شرفة بحرية', 'موقف'], imgs: ['/assts/Projects.png', '/assts/Project3.png', '/assts/Project2.png'], type: 'apartment', year: '2024', developer: 'روشن العقارية', architect: 'مكتب الدار للمعمارية', style: 'بحري عصري', interior: 'أنيق بسيط', rooms: ['غرفة معيشة مع إطلالة بحرية', 'غرفة نوم ماستر', 'غرفتا نوم', 'مطبخ عصري', '2 حمام', 'شرفة مطلة على البحر'], lat: 21.5147, lng: 39.1566, finishes: 'تشطيبات سوبر ديلوكس', floors: '18', parking: '1 موقف' },
@@ -127,6 +128,7 @@ export default function ProjectDetailsPage() {
   const [lightbox, setLightbox] = useState({ open: false, index: 0 })
   const [submitted, setSubmitted] = useState(false)
   const [form, setForm] = useState({ name: '', phone: '', interest: '', message: '' })
+  const { t, isArabic } = useLanguage()
 
   const project = allProjects.find((p) => p.id === Number(id))
 
@@ -147,9 +149,9 @@ export default function ProjectDetailsPage() {
 
   if (!project) {
     return (
-      <div dir="rtl" style={{ padding: '160px 8vw', textAlign: 'center' }}>
-        <h1 style={{ fontFamily: "'Saudi', sans-serif", fontSize: '2rem', color: '#1B1815' }}>المشروع غير موجود</h1>
-        <Link to="/projects" style={{ fontFamily: "'Saudi', sans-serif", color: '#C8956C', marginTop: 16, display: 'inline-block' }}>العودة للعقارات</Link>
+      <div dir={isArabic ? 'rtl' : 'ltr'} style={{ padding: '160px 8vw', textAlign: 'center' }}>
+        <h1 style={{ fontFamily: "'Saudi', sans-serif", fontSize: '2rem', color: '#1B1815' }}>{isArabic ? 'المشروع غير موجود' : 'Project not found'}</h1>
+        <Link to="/projects" style={{ fontFamily: "'Saudi', sans-serif", color: '#C8956C', marginTop: 16, display: 'inline-block' }}>{t('common', 'backToProjects')}</Link>
       </div>
     )
   }
@@ -157,7 +159,7 @@ export default function ProjectDetailsPage() {
   const selectStyle = { ...inputStyle, appearance: 'none', cursor: 'pointer', color: form.interest ? '#1B1815' : 'rgba(27,24,21,0.4)', backgroundImage: `url("data:image/svg+xml,%3Csvg width='10' height='6' viewBox='0 0 10 6' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%23C8956C' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E")`, backgroundRepeat: 'no-repeat', backgroundPosition: 'left 14px center' }
 
   return (
-    <div dir="rtl" style={{ minHeight: '100vh' }}>
+    <div dir={isArabic ? 'rtl' : 'ltr'} style={{ minHeight: '100vh' }}>
       {lightbox.open && (
         <Lightbox images={project.imgs} index={lightbox.index} onClose={() => setLightbox({ open: false, index: 0 })} onPrev={() => setLightbox((s) => ({ ...s, index: (s.index - 1 + project.imgs.length) % project.imgs.length }))} onNext={() => setLightbox((s) => ({ ...s, index: (s.index + 1) % project.imgs.length }))} />
       )}
@@ -168,7 +170,7 @@ export default function ProjectDetailsPage() {
         <Link to="/projects" onClick={(e) => { e.preventDefault(); navigate('/projects') }} style={{ fontFamily: "'Saudi', sans-serif", fontSize: '0.8rem', color: '#C8956C', textDecoration: 'none', marginBottom: 20, display: 'inline-block' }}>
           <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}>
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
-            العودة للعقارات
+            {t('common', 'backToProjects')}
           </span>
         </Link>
         <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 8 }}>
@@ -210,26 +212,26 @@ export default function ProjectDetailsPage() {
             {/* Price bar */}
             <div style={{ display: 'flex', alignItems: 'center', gap: 20, marginBottom: 32, paddingBottom: 20, borderBottom: '1px solid rgba(27,24,21,0.06)' }}>
               <div>
-                <p style={{ fontFamily: "'Saudi', sans-serif", fontSize: '0.7rem', color: '#1B1815', opacity: 0.35, marginBottom: 4 }}>السعر</p>
+                <p style={{ fontFamily: "'Saudi', sans-serif", fontSize: '0.7rem', color: '#1B1815', opacity: 0.35, marginBottom: 4 }}>{t('common', 'price')}</p>
                 <div style={{ display: 'flex', alignItems: 'baseline', gap: 6 }}>
                   <span style={{ fontFamily: "'Saudi', sans-serif", fontSize: '1.6rem', fontWeight: 700, color: '#C8956C' }}>{project.price}</span>
-                  <span style={{ fontFamily: "'Saudi', sans-serif", fontSize: '0.7rem', color: '#1B1815', opacity: 0.3 }}>ريال</span>
+                  <span style={{ fontFamily: "'Saudi', sans-serif", fontSize: '0.7rem', color: '#1B1815', opacity: 0.3 }}>{t('common', 'sar')}</span>
                 </div>
               </div>
               <div style={{ width: 1, height: 36, background: 'rgba(27,24,21,0.08)' }} />
               <div>
-                <p style={{ fontFamily: "'Saudi', sans-serif", fontSize: '0.7rem', color: '#1B1815', opacity: 0.35, marginBottom: 4 }}>المساحة</p>
+                <p style={{ fontFamily: "'Saudi', sans-serif", fontSize: '0.7rem', color: '#1B1815', opacity: 0.35, marginBottom: 4 }}>{t('common', 'area')}</p>
                 <span style={{ fontFamily: "'Saudi', sans-serif", fontSize: '1.1rem', fontWeight: 600, color: '#1B1815' }}>{project.area}</span>
               </div>
               <div style={{ width: 1, height: 36, background: 'rgba(27,24,21,0.08)' }} />
               <div>
-                <p style={{ fontFamily: "'Saudi', sans-serif", fontSize: '0.7rem', color: '#1B1815', opacity: 0.35, marginBottom: 4 }}>السنة</p>
+                <p style={{ fontFamily: "'Saudi', sans-serif", fontSize: '0.7rem', color: '#1B1815', opacity: 0.35, marginBottom: 4 }}>{t('common', 'year')}</p>
                 <span style={{ fontFamily: "'Saudi', sans-serif", fontSize: '1.1rem', fontWeight: 600, color: '#1B1815' }}>{project.year}</span>
               </div>
             </div>
 
             {/* Description */}
-            <h2 style={{ fontFamily: "'Saudi', sans-serif", fontSize: '1.2rem', fontWeight: 700, color: '#1B1815', marginBottom: 12 }}>عن المشروع</h2>
+            <h2 style={{ fontFamily: "'Saudi', sans-serif", fontSize: '1.2rem', fontWeight: 700, color: '#1B1815', marginBottom: 12 }}>{isArabic ? 'عن المشروع' : 'About the project'}</h2>
             <p style={{ fontFamily: "'Saudi', sans-serif", fontSize: '0.88rem', color: '#1B1815', opacity: 0.55, lineHeight: 1.9, marginBottom: 32 }}>{project.desc}</p>
 
             {/* Architecture & Interior */}
@@ -270,7 +272,7 @@ export default function ProjectDetailsPage() {
             </div>
 
             {/* Features */}
-            <h2 style={{ fontFamily: "'Saudi', sans-serif", fontSize: '1.2rem', fontWeight: 700, color: '#1B1815', marginBottom: 16 }}>المميزات</h2>
+            <h2 style={{ fontFamily: "'Saudi', sans-serif", fontSize: '1.2rem', fontWeight: 700, color: '#1B1815', marginBottom: 16 }}>{isArabic ? 'المميزات' : 'Features'}</h2>
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 12, marginBottom: 32 }}>
               {project.features.map((f, fi) => (
                 <div key={fi} style={{ display: 'flex', alignItems: 'center', gap: 10, background: '#F3F0EB', padding: '12px 14px', borderRadius: 10 }}>
@@ -281,7 +283,7 @@ export default function ProjectDetailsPage() {
             </div>
 
             {/* Rooms */}
-            <h2 style={{ fontFamily: "'Saudi', sans-serif", fontSize: '1.2rem', fontWeight: 700, color: '#1B1815', marginBottom: 16 }}>توزيع الغرف</h2>
+            <h2 style={{ fontFamily: "'Saudi', sans-serif", fontSize: '1.2rem', fontWeight: 700, color: '#1B1815', marginBottom: 16 }}>{isArabic ? 'توزيع الغرف' : 'Room layout'}</h2>
             <div style={{ background: '#F3F0EB', borderRadius: 12, padding: '20px', marginBottom: 32 }}>
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '8px 24px' }}>
                 {project.rooms.map((r, ri) => (
@@ -294,7 +296,7 @@ export default function ProjectDetailsPage() {
             </div>
 
             {/* Map */}
-            <h2 style={{ fontFamily: "'Saudi', sans-serif", fontSize: '1.2rem', fontWeight: 700, color: '#1B1815', marginBottom: 16 }}>الموقع</h2>
+            <h2 style={{ fontFamily: "'Saudi', sans-serif", fontSize: '1.2rem', fontWeight: 700, color: '#1B1815', marginBottom: 16 }}>{isArabic ? 'الموقع' : 'Location'}</h2>
             <div style={{ borderRadius: 14, overflow: 'hidden', height: 300, background: '#F3F0EB', position: 'relative' }}>
               <iframe title="map" width="100%" height="100%" style={{ border: 0 }} loading="lazy" src={`https://www.openstreetmap.org/export/embed.html?bbox=${project.lng - 0.02}%2C${project.lat - 0.01}%2C${project.lng + 0.02}%2C${project.lat + 0.01}&layer=mapnik&marker=${project.lat}%2C${project.lng}`} />
             </div>

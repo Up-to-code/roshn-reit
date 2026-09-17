@@ -1,5 +1,5 @@
-import { useState, useCallback, useEffect } from 'react'
-import { Routes, Route, useLocation } from 'react-router-dom'
+import { useState, useCallback, useEffect, useRef } from 'react'
+import { Link, NavLink, Navigate, Route, Routes, useLocation } from 'react-router-dom'
 import SplashScreen from './components/SplashScreen'
 import HeroSection from './components/HeroSection'
 import AppearanceSection from './components/AppearanceSection'
@@ -7,11 +7,41 @@ import WhyUsSection from './components/WhyUsSection'
 import CTASection from './components/CTASection'
 import Footer from './components/Footer'
 import CustomCursor from './components/CustomCursor'
+import { useLanguage } from './i18n/LanguageContext.jsx'
 import ProjectsPage from './pages/ProjectsPage'
 import ProjectDetailsPage from './pages/ProjectDetailsPage'
 import AboutPage from './pages/AboutPage'
 import WhyUsPage from './pages/WhyUsPage'
 import './App.css'
+
+function PageTransition() {
+  const location = useLocation()
+  const [visible, setVisible] = useState(false)
+  const firstRender = useRef(true)
+
+  useEffect(() => {
+    if (firstRender.current) {
+      firstRender.current = false
+      return undefined
+    }
+    setVisible(true)
+    const timer = window.setTimeout(() => setVisible(false), 800)
+    return () => window.clearTimeout(timer)
+  }, [location.pathname])
+
+  return visible ? <SplashScreen isTransition onComplete={() => setVisible(false)} /> : null
+}
+
+function NotFoundPage() {
+  const { t, isArabic } = useLanguage()
+  return (
+    <div dir={isArabic ? 'rtl' : 'ltr'} style={{ minHeight: '60vh', padding: '160px 8vw 80px', textAlign: 'center' }}>
+      <p style={{ fontFamily: "'Saudi', sans-serif", color: '#C8956C', fontWeight: 700 }}>404</p>
+      <h1 style={{ fontFamily: "'Saudi', sans-serif", fontSize: 'clamp(2rem, 5vw, 3rem)', color: '#1B1815' }}>{t('notFound', 'title')}</h1>
+      <Link to="/" style={{ display: 'inline-block', marginTop: 20, fontFamily: "'Saudi', sans-serif", color: '#C8956C' }}>{t('notFound', 'back')}</Link>
+    </div>
+  )
+}
 
 function App() {
   const [showSplash, setShowSplash] = useState(true)
@@ -19,6 +49,7 @@ function App() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const handleSplashComplete = useCallback(() => setShowSplash(false), [])
   const location = useLocation()
+  const { t, toggleLanguage, isArabic } = useLanguage()
   const isHome = location.pathname === '/'
   const [isMobile, setIsMobile] = useState(false)
 
@@ -49,18 +80,18 @@ function App() {
   const navColor = !isHome || scrolled ? '#1B1815' : '#fff'
 
   const navLinks = [
-    { to: '/projects', label: 'العقارات' },
-    { to: '/why-us', label: 'لماذا روشن' },
-    { to: '/about', label: 'من نحن' },
-    { to: '/contact', label: 'تواصل معنا' },
+    { to: '/projects', label: t('nav', 'projects') },
+    { to: '/why-us', label: t('nav', 'whyUs') },
+    { to: '/about', label: t('nav', 'about') },
+    { to: '/contact', label: t('nav', 'contact') },
   ]
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background" dir={isArabic ? 'rtl' : 'ltr'} style={{ direction: isArabic ? 'rtl' : 'ltr' }}>
       <CustomCursor />
       {showSplash && <SplashScreen onComplete={handleSplashComplete} />}
 
-      <nav className="fixed top-0 left-0 z-50 w-full" dir="rtl">
+      <nav className="fixed top-0 left-0 z-50 w-full" dir={isArabic ? 'rtl' : 'ltr'}>
         <div
           className="flex items-center justify-between"
           style={{
@@ -75,23 +106,32 @@ function App() {
             transition: 'all 0.5s cubic-bezier(0.4, 0, 0.2, 1)',
           }}
         >
-          <a href="/" className="flex items-center gap-3">
+          <Link to="/" className="flex items-center gap-3">
             <img src={!isHome || scrolled ? '/logo/logo.png' : '/logo/The light mode..png'} alt="ROSHN" style={{ height: isMobile ? 40 : 48, width: isMobile ? 40 : 48, objectFit: 'contain', transition: 'opacity 0.4s' }} />
             {!isMobile && <img src="/logo/logo_world.png" alt="ROSHN" style={{ height: 26, objectFit: 'contain', filter: !isHome || scrolled ? 'none' : 'brightness(0) invert(1)', transition: 'filter 0.4s' }} />}
-          </a>
+          </Link>
+
+          <button
+            type="button"
+            onClick={toggleLanguage}
+            aria-label={t('language', 'toggle')}
+            style={{ marginInlineStart: 'auto', marginInlineEnd: isMobile ? 12 : 36, color: navColor, background: 'transparent', border: '1px solid currentColor', borderRadius: 999, padding: '5px 12px', fontFamily: "'Saudi', sans-serif", fontSize: '0.72rem', cursor: 'pointer' }}
+          >
+            {t('language', 'label')}
+          </button>
 
           {/* Desktop nav */}
           {!isMobile && (
             <div className="flex items-center gap-8">
               {navLinks.map((link) => (
-                <a
+                <NavLink
                   key={link.to}
-                  href={link.to}
+                  to={link.to}
                   className="text-base font-medium transition-colors"
-                  style={{ color: location.pathname === link.to ? '#C8956C' : navColor, cursor: 'pointer', textDecoration: 'none' }}
+                  style={{ color: location.pathname === link.to || (link.to === '/projects' && location.pathname.startsWith('/projects/')) ? '#C8956C' : navColor, cursor: 'pointer', textDecoration: 'none' }}
                 >
                   {link.label}
-                </a>
+                </NavLink>
               ))}
             </div>
           )}
@@ -136,16 +176,16 @@ function App() {
             }}
           >
             {navLinks.map((link, i) => (
-              <a
+              <NavLink
                 key={link.to}
-                href={link.to}
+                to={link.to}
                 style={{
                   display: 'block',
                   padding: '14px 0',
                   fontFamily: "'Saudi', sans-serif",
                   fontSize: '1rem',
                   fontWeight: 600,
-                  color: location.pathname === link.to ? '#C8956C' : '#1B1815',
+                  color: location.pathname === link.to || (link.to === '/projects' && location.pathname.startsWith('/projects/')) ? '#C8956C' : '#1B1815',
                   textDecoration: 'none',
                   borderBottom: i < navLinks.length - 1 ? '0.5px solid rgba(27,24,21,0.06)' : 'none',
                   opacity: mobileMenuOpen ? 1 : 0,
@@ -154,13 +194,14 @@ function App() {
                 }}
               >
                 {link.label}
-              </a>
+              </NavLink>
             ))}
           </div>
         )}
       </nav>
 
       <main>
+        <PageTransition />
         <Routes>
           <Route path="/" element={<><div className="cursor-triangle"><HeroSection ready={!showSplash} /></div><div className="cursor-circle"><AppearanceSection /></div><div className="cursor-triangle"><WhyUsSection /></div><div className="cursor-circle"><CTASection /></div><div className="cursor-triangle"><Footer /></div></>} />
           <Route path="/projects" element={<><ProjectsPage /><Footer /></>} />
@@ -168,6 +209,8 @@ function App() {
           <Route path="/why-us" element={<><WhyUsPage /><Footer /></>} />
           <Route path="/about" element={<><AboutPage /><Footer /></>} />
           <Route path="/contact" element={<><div style={{ paddingTop: 68 }}><CTASection /></div><Footer /></>} />
+          <Route path="/404" element={<><NotFoundPage /><Footer /></>} />
+          <Route path="*" element={<Navigate to="/404" replace />} />
         </Routes>
       </main>
     </div>

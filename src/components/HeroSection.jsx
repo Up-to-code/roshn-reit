@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
+import { useLanguage } from '../i18n/LanguageContext.jsx'
 
 gsap.registerPlugin(ScrollTrigger)
 
@@ -22,12 +23,14 @@ export default function HeroSection({ ready }) {
   const textFrontRef = useRef(null)
   const wordsRef = useRef([])
   const mobile = useIsMobile()
+  const { isArabic } = useLanguage()
 
   useEffect(() => {
     if (skyRef.current) skyRef.current.playbackRate = 0.5
   }, [])
 
   useEffect(() => {
+    if (!ready) return undefined
     gsap.fromTo(buildingRef.current,
       { opacity: 0.7 },
       { opacity: 1, duration: 1.5, ease: 'power2.out', delay: 1.1 }
@@ -44,7 +47,7 @@ export default function HeroSection({ ready }) {
         delay: 1.1,
       }
     )
-  }, [])
+  }, [ready])
 
   useEffect(() => {
     const ctx = gsap.context(() => {
@@ -74,8 +77,8 @@ export default function HeroSection({ ready }) {
     return () => ctx.revert()
   }, [])
 
-  const line1 = ['حيث', 'يلتقي', 'الفخامة', 'بالثقة']
-  const line2 = ['في', 'جدة', '...استثمارك', 'يبدأ', 'هنا']
+  const line1 = isArabic ? ['حيث', 'يلتقي', 'الفخامة', 'بالثقة'] : ['Where', 'luxury', 'meets', 'confidence']
+  const line2 = isArabic ? ['في', 'جدة', '...استثمارك', 'يبدأ', 'هنا'] : ['In', 'Jeddah', '...your', 'investment', 'starts', 'here']
 
   return (
     <>
@@ -95,15 +98,16 @@ export default function HeroSection({ ready }) {
           pointerEvents: 'none',
         }}
       >
-        <div dir="rtl" style={{ display: 'inline-block', textAlign: 'right', maxWidth: '90%' }}>
+          <div dir={isArabic ? 'rtl' : 'ltr'} style={{ display: 'block', width: mobile ? '90vw' : '82vw', maxWidth: 1100, textAlign: isArabic ? 'right' : 'left', overflowWrap: 'break-word' }}>
           <h2
             style={{
               fontFamily: "'Saudi', sans-serif",
-              fontSize: mobile ? 'clamp(1.6rem, 8vw, 2.5rem)' : 'clamp(2.5rem, 6vw, 5.5rem)',
+              fontSize: mobile ? 'clamp(1.6rem, 8vw, 2.5rem)' : 'clamp(2.2rem, 5.2vw, 5.5rem)',
               fontWeight: 700,
               color: '#fff',
               lineHeight: 1.2,
               textShadow: mobile ? '0 2px 20px rgba(0,0,0,0.4)' : 'none',
+              margin: 0,
             }}
           >
             {line1.map((word, i) => (

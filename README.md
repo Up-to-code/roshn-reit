@@ -71,3 +71,7 @@ npm run build
 ## Stack
 
 React 19, Vite, React Router, GSAP, Framer Motion, Three.js, React Three Fiber, Tailwind CSS, and Oxlint.
+
+## Project links
+
+[Source](https://github.com/Up-to-code/roshn-reit) · [Issues](https://github.com/Up-to-code/roshn-reit/issues) · [Public project directory](https://github.com/qentrah/.github/blob/main/profile/PROJECTS.md)
